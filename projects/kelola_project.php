@@ -178,7 +178,17 @@
               }
 
               $datetime = new DateTime();
-              $unix=$datetime->getTimestamp()
+              $unix=$datetime->getTimestamp();
+
+              if(isset($_POST['kelola'])){
+                if($_POST['kelola'] == 'Tambah'){
+                  $id_project =$data[0];
+                  $nama       =$data[1];
+                  $datetime   =$data[2];
+                  $price      =$data[3];
+                  $status     =$data[4];
+                }
+              }
             ?>
             <div class="col">
               <div class="card recent-sales overflow-auto">
@@ -189,7 +199,7 @@
                       <h2 class="fw-bold mb-1" style="text-transform: capitalize;"><?= $_GET['kelola'] ?> Project Baru</h2>
                     </div>
                   </div>
-                  <form action="../model/proses_project.php" method="post">
+                  <form action="../model/proses_project.php" method="post" enctype="multipart/form-data">
                     <input type="hidden" value=<?= $_GET['kelola'] ?> name="kelola" />
                     <div class="mb-3">
                       <label for="exampleFormControlInput1" class="form-label">Project ID</label>
@@ -220,7 +230,7 @@
                     </div>
                     <div class="mb-3">
                       <label for="fileInput" class="form-label">Unggah Gambar</label>
-                      <input type="file" class="form-control-file" id="uploadImg" name="img" accept=".jpg,.gif,.png,.webp" />
+                      <input type="file" class="form-control-file" name="img_file[]" accept=".jpg,.gif,.png,.webp" multiple/>
                     </div>
                     <div class="row">
                       <div class="col-12" style="text-align: end;">

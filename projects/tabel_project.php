@@ -199,6 +199,7 @@
                           $datetime   =$data[2];
                           $price      =$data[3];
                           $status     =$data[4];
+                          $img_files  =$data[5];
                       ?>
                       <tr>
                         <th scope="row">#<?= $id_project ?></th>
