@@ -179,14 +179,11 @@
                   $id_project = randString(5);
               }
 
-              $datetime = new DateTime();
-              $unix=$datetime->getTimestamp();
-
               if(isset($_GET['kelola'])){
                 // 'Tambah' condition
                 if($_GET['kelola'] == 'tambah'){
                   $nama       ="";
-                  $datetime   ="";
+                  $datetime   =date("Y-m-d\TH:i");
                   $price      ="";
                   $status     ="";
                 }else{
@@ -198,6 +195,7 @@
                       $datetime   =date("Y-m-d\TH:i", $data[2]);
                       $price      =$data[3];
                       $status     =$data[4];
+                      $img_files  =$data[5];
                     }
                 }
             }
@@ -208,31 +206,33 @@
                 <div class="card-body">
                   <div class="row py-4">
                     <div class="col">
-                      <h2 class="fw-bold mb-1" style="text-transform: capitalize;"><?= $_GET['kelola'] ?> Project Baru</h2>
+                      <h2 class="fw-bold mb-1" style="text-transform: capitalize;"><?= $_GET['kelola'] ?> Project</h2>
+                      <?php if($_GET['kelola'] == 'hapus') echo '<h5 class="fw-bold mb-1 mt-3 bg-danger text-light p-1 rounded-1 text-center" >Data akan hilang dari database dan tidak bisa dikembalikan!</h5>' ?>
                     </div>
                   </div>
                   <form action="../model/proses_project.php" method="post" enctype="multipart/form-data">
                     <input type="hidden" value=<?= $_GET['kelola'] ?> name="kelola" />
                     <div class="mb-3">
-                      <label for="exampleFormControlInput1" class="form-label">Project ID</label>
-                      <input type="text" class="form-control" name="id_project" id="projectName" value=<?= $id_project ?> />
+                      <label for="exampleFormControlInput1" class="form-label fw-bold">Project ID</label>
+                      <input type="text" class="form-control bg-dark-light" name="id_project" id="projectName" value=<?= $id_project ?> />
                       <div class="form-text"><span class="text-danger">*</span> Terisi otomatis</div>
                     </div>
                     <div class="mb-3">
-                      <label for="exampleFormControlInput1" class="form-label">Project Name</label>
-                      <input type="text" class="form-control" name="nama" id="projectName" placeholder="ex. Wedding Egie Tatsa" value=<?= $nama ?> />
+                      <label for="exampleFormControlInput1" class="form-label fw-bold fw-bold">Project Name</label>
+                      <input type="text" class="form-control" name="nama" id="projectName" placeholder="ex. Wedding Egie Tatsa" value='<?= $nama ?>' />
                     </div>
                     <div class="mb-3">
-                      <label for="exampleFormControlInput1" class="form-label">Tanggal Project</label>
-                      <input type="text" class="form-control" name="datetime" id="projectName" value=<?= $datetime ?> />
-                      <div class="form-text"><span class="text-danger">*</span> Terisi otomatis</div>
+                      <label for="exampleFormControlInput1" class="form-label fw-bold fw-bold">Tanggal Project</label>
+                      <input type="datetime-local" class="form-control <?php if($_GET['kelola'] != 'edit') echo 'bg-dark-light' ?>" name="datetime" id="projectName" value=<?= $datetime ?> />
+                      <?php if($_GET['kelola'] != 'edit') echo '<div class="form-text"><span class="text-danger">*</span> Terisi otomatis</div>'; ?>
+                      
                     </div>
                     <div class="mb-3">
-                      <label for="exampleFormControlInput1" class="form-label">Harga</label>
+                      <label for="exampleFormControlInput1" class="form-label fw-bold fw-bold">Harga</label>
                       <input type="number" class="form-control" name="price" id="projectName" placeholder="ex. 300000" value=<?= $price ?> />
                     </div>
                     <div class="mb-3">
-                      <label for="exampleFormControlInput1" class="form-label">Status</label>
+                      <label for="exampleFormControlInput1" class="form-label fw-bold fw-bold">Status</label>
                       <select class="form-select" name="status" aria-label="Default select example">
                         <option selected disabled>Open this select menu</option>
                         <option value="rejected" <?php if($status =="rejected") echo 'selected'; ?>>Rejected</option>
@@ -241,9 +241,47 @@
                       </select>
                     </div>
                     <div class="mb-3">
-                      <label for="fileInput" class="form-label">Unggah Gambar</label>
+                      <label for="fileInput" class="form-label fw-bold fw-bold">Unggah Gambar</label><br/>
                       <input type="file" class="form-control-file" name="img_file[]" accept=".jpg,.gif,.png,.webp" multiple/>
                     </div>
+                    <?php
+                      if($_GET['kelola'] == 'edit'){
+                    ?>
+                    <div class="mb-3">
+                      <label for="fileInput" class="form-label fw-bold fw-bold">Daftar Gambar</label>
+                      <div class="form-text"><span class="text-danger">*</span> Centang untuk mengapus gambar</div>
+                      <table class="table datatable">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Gambar</th>
+                            <th scope="col">Nama File</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php 
+                            $array_imgs = explode(",", $img_files);
+                            $i =0;
+                            foreach($array_imgs as $img ){
+                            $i++;
+                          ?>
+                          <tr>
+                            <td><input type="checkbox" name="delete_img[ ]" value="<?= $img ?>"></td>
+                            <td><img style="width: 75px" src='<?php echo "../assets/img/portofolio/".$id_project."/".$img; ?>' alt="<?= $id_project ?>"></td>
+                            <td><?= $img ?></td>
+                          </tr>
+                          <?php } ?>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Gambar</th>
+                            <th scope="col">Nama File</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                    <?php } ?>
                     <div class="row">
                       <div class="col-12" style="text-align: end;">
                         <button type="submit" class="btn btn-primary">Submit</button>
