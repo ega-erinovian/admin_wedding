@@ -1,4 +1,6 @@
-<?php date_default_timezone_get(); ?>
+<?php 
+  include '../model/connect.php';
+  date_default_timezone_get(); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -180,15 +182,25 @@
               $datetime = new DateTime();
               $unix=$datetime->getTimestamp();
 
-              if(isset($_POST['kelola'])){
-                if($_POST['kelola'] == 'Tambah'){
-                  $id_project =$data[0];
-                  $nama       =$data[1];
-                  $datetime   =$data[2];
-                  $price      =$data[3];
-                  $status     =$data[4];
+              if(isset($_GET['kelola'])){
+                // 'Tambah' condition
+                if($_GET['kelola'] == 'tambah'){
+                  $nama       ="";
+                  $datetime   ="";
+                  $price      ="";
+                  $status     ="";
+                }else{
+                    // 'Edit' Condition - Form terisi dengan data didatabase
+                    $query = mysqli_query($connect, "SELECT * FROM projects WHERE id_project='".$_GET['id']."'");
+                    while($data=mysqli_fetch_array($query)){
+                      $id_project =$data[0];
+                      $nama       =$data[1];
+                      $datetime   =date("Y-m-d\TH:i", $data[2]);
+                      $price      =$data[3];
+                      $status     =$data[4];
+                    }
                 }
-              }
+            }
             ?>
             <div class="col">
               <div class="card recent-sales overflow-auto">
@@ -208,24 +220,24 @@
                     </div>
                     <div class="mb-3">
                       <label for="exampleFormControlInput1" class="form-label">Project Name</label>
-                      <input type="text" class="form-control" name="nama" id="projectName" placeholder="ex. Wedding Egie Tatsa">
+                      <input type="text" class="form-control" name="nama" id="projectName" placeholder="ex. Wedding Egie Tatsa" value=<?= $nama ?> />
                     </div>
                     <div class="mb-3">
                       <label for="exampleFormControlInput1" class="form-label">Tanggal Project</label>
-                      <input type="text" class="form-control" name="datetime" id="projectName" value=<?= $datetime->format('Y-m-d H:i:s') ?> />
+                      <input type="text" class="form-control" name="datetime" id="projectName" value=<?= $datetime ?> />
                       <div class="form-text"><span class="text-danger">*</span> Terisi otomatis</div>
                     </div>
                     <div class="mb-3">
                       <label for="exampleFormControlInput1" class="form-label">Harga</label>
-                      <input type="number" class="form-control" name="price" id="projectName" placeholder="ex. 300000">
+                      <input type="number" class="form-control" name="price" id="projectName" placeholder="ex. 300000" value=<?= $price ?> />
                     </div>
                     <div class="mb-3">
                       <label for="exampleFormControlInput1" class="form-label">Status</label>
                       <select class="form-select" name="status" aria-label="Default select example">
                         <option selected disabled>Open this select menu</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
+                        <option value="rejected" <?php if($status =="rejected") echo 'selected'; ?>>Rejected</option>
+                        <option value="pending" <?php if($status =="pending") echo 'selected'; ?>>Pending</option>
+                        <option value="approved" <?php if($status =="approved") echo 'selected'; ?>>Approved</option>
                       </select>
                     </div>
                     <div class="mb-3">

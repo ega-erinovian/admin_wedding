@@ -220,6 +220,13 @@
                         <td>
                           <div class="row gap-2">
                             <div class="col-2">
+                              <form action="./detail_project.php" method="get">
+                                <input type="hidden" name="id" value=<?= $id_project ?> />
+                                <input type="hidden" name="kelola" value="lihat" />
+                                <button type="submit" class="btn btn-info btn-sm"><i class="bi bi-eye"></i></button>
+                              </form>
+                            </div>
+                            <div class="col-2">
                               <form action="./kelola_project.php" method="get">
                                 <input type="hidden" name="id" value=<?= $id_project ?> />
                                 <input type="hidden" name="kelola" value="edit" />
